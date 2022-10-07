@@ -62,12 +62,12 @@ function calculateAll() {
 
 
 function removeProduct(event) {
-// currentTarget hace referencia al elemento del dom en el que se ha hecho clic
+  // currentTarget hace referencia al elemento del dom en el que se ha hecho clic
   const target = event.currentTarget;
   // console.log('The target in remove is:', target);
   // Con parentNode nos movemos a la etiqueta html que contiene al elemento que tenemos en target
   //  en este caso hacemos clic en el button y nos movemos al padre 
-  const productToRemove  =  target.parentNode.parentNode;
+  const productToRemove = target.parentNode.parentNode;
   const parent = productToRemove.parentNode
 
   parent.removeChild(productToRemove);
@@ -78,9 +78,46 @@ function removeProduct(event) {
 
 function createProduct() {
   //... your code goes here
+  console.log('Crear producto');
+  const newProduct = document.querySelector('.create-product');
+  const productName = newProduct.querySelector('input[type="text"]').value;
+  console.log('nombre producto: ', productName);
+  if (productName.trim().length === 0) return;
+  const priceText = newProduct.querySelector('input[type="number"]').value;
+  const price = parseFloat(priceText).toFixed(2);
+  console.log('precio: ', price);
+  const body = document.querySelector('tbody');
+  // Al reeplazar el html con nuevo html estamos borrando los listeners de los botones de borrar
+  body.innerHTML += `
+  <tr class="product">
+      <td class="name">
+      <span>${productName}</span>
+      </td>
+      <td class="price">$<span>${price}</span></td>
+      <td class="quantity">
+      <input type="number" value="0" min="0" placeholder="Quantity" />
+      </td>
+      <td class="subtotal">$<span>0</span></td>
+      <td class="action">
+      <button class="btn btn-remove">Remove</button>
+      </td>
+  </tr>
+  `
+  newProduct.querySelector('input[type="text"]').value = '';
+  newProduct.querySelector('input[type="number"]').value = 0;
+  // Volvemos a agregar los listeners del boton de borrar
+  removeListeners();
+
+
+  function removeListeners() {
+    const remove = document.querySelectorAll('.btn.btn-remove');
+    for (let i = 0; i < remove.length; i++) {
+      const element = remove[i];
+      element.addEventListener('click', removeProduct)
+    }
+
+  }
 }
-
-
 
 
 
@@ -100,6 +137,6 @@ window.addEventListener('load', () => {
     element.addEventListener('click', removeProduct);
   }
 
-  const createProduct = document.getElementById('create');
-  createProduct.addEventListener('click', createProduct);
+  const newProduct = document.getElementById('create');
+  newProduct.addEventListener('click', createProduct);
 });
